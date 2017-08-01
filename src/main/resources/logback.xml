@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<Pattern>.%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %n
+			</Pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>TRACE</level>
+		</filter>
+	</appender>
+
+	<appender name="agentAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/opt/ehplatform/agentlogs/debug.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>/opt/ehplatform/agentlogs/debug.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 10MB -->
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{35} : %msg %n
+			</Pattern>
+		</encoder>
+	</appender>
+
+	<appender name="webAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/opt/ehplatform/agentlogs/system.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>/opt/ehplatform/agentlogs/system.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 10MB -->
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{35} : %msg %n
+			</Pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.springframework.web" level="INFO">
+		<appender-ref ref="webAppender" />
+	</logger>
+
+	<logger name="com.epro" level="debug">
+		<appender-ref ref="agentAppender" />
+	</logger>
+</configuration>
